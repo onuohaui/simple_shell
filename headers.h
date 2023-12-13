@@ -1,11 +1,14 @@
 #ifndef HEADERS_H
 #define HEADERS_H
 
+#include <string.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+
+extern char **environ;
 
 /* function prototypes */
 void display_prompt(void);

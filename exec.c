@@ -9,7 +9,12 @@ int execute_command(char *line)
 {
 	pid_t child_pid;
 	int status;
-	char **args = parse_input(line);
+	char **args;
+
+	if (strlen(line) == 0)
+		return (1);
+
+	args = parse_input(line);
 
 	/* Handle built-in commands */
 	if (is_builtin(args[0]))
@@ -22,14 +27,19 @@ int execute_command(char *line)
 	child_pid = fork();
 	if (child_pid == 0)
 	{
-		if (execvp(args[0], args) == -1)
+		if (args[0] != NULL)
 		{
-			fprintf(stderr, "./hsh: 1: %s: not found\n", args[0]);
+			if (execve(args[0], args, environ) == -1)
+			{
+				fprintf(stderr, "./hsh: 1: %s: not found\n", args[0]);
+			}
 		}
+		free(args);
 	}
 	else if (child_pid < 0)
 	{
 		perror("Error forking");
+		free(args);
 	}
 	else
 	{
@@ -39,6 +49,7 @@ int execute_command(char *line)
 		free(args);
 		return (WEXITSTATUS(status));
 	}
+
 	return (0);
 }
 
